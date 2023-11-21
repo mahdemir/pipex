@@ -23,7 +23,7 @@ PROG_HEADER		= $(INC_DIR)/pipex.h
 
 SRC = $(addprefix $(SRC_DIR)/, \
     	main.c \
-		error_hangling.c)
+		pipex.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 ##### COMPILATION ##############################################################
