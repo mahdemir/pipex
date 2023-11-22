@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 14:39:03 by mademir       #+#    #+#                 */
-/*   Updated: 2023/11/21 16:18:19 by mademir       ########   odam.nl         */
+/*   Updated: 2023/11/22 13:25:01 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # define MSG_FORK "\033[31mError:\033[0m cannot fork process\n"
 # define MSG_FILE "\033[31mError:\033[0m no such file or directory: "
 # define MSG_COMMAND "\033[31mError:\033[0m command not found: "
+# define MSG_COMMAND_EMPTY "\033[31mError:\033[0m command not found"
 
 /********** LIBRARIES *********************************************************/
 
@@ -32,11 +33,11 @@
 
 /* First command reads the input from the infile
  * and passes the output to the write-end(fd[1]) of the pipe. */
-void	child_proces(char **argv, char **envp, int infile, int *fd);
+void	child_proces(char **argv, char **envp, int *fd);
 
 /* Second command takes input from read-end(fd[0]) of the pipe
  * and passes the output to the output file. */
-void	parent_proces(char **argv, char **envp, int outfile, int *fd);
+void	parent_proces(char **argv, char **envp, int *fd);
 
 /* Simple error handling function that prints message to standard output. */
 void	err_msg(char *message, char *argv);

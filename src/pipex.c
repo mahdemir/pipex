@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 19:45:31 by mademir       #+#    #+#                 */
-/*   Updated: 2023/11/21 16:47:38 by mademir       ########   odam.nl         */
+/*   Updated: 2023/11/22 16:05:30 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,12 @@ static void	execute(char *argv, char **envp)
 	cmd = ft_split(argv, ' ');
 	if (!cmd)
 		return ;
-	path = path_finder(envp, cmd[0]);
+	if (!*cmd)
+		err_msg(MSG_COMMAND_EMPTY, argv);
+	if (access(*cmd, F_OK) == 0)
+		path = *cmd;
+	else
+		path = path_finder(envp, cmd[0]);
 	if (!path)
 	{
 		ft_matrix_free((void **)cmd);
@@ -70,18 +75,48 @@ void	err_msg(char *message, char *argv)
 	exit(EXIT_FAILURE);
 }
 
-void	child_proces(char **argv, char **envp, int infile, int *fd)
+void	child_proces(char **argv, char **envp, int *fd)
 {
-	dup2(infile, STDIN_FILENO);
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[0]);
-	execute(argv[2], envp);
+	pid_t	pid;
+	int		infile;
+
+	pid = fork();
+	if (pid == -1)
+		err_msg(MSG_FORK, NULL);
+	else if (pid == 0)
+	{
+		close(fd[0]);
+		infile = open(argv[1], O_RDONLY);
+		if (infile == -1)
+			err_msg(MSG_FILE, argv[1]);
+		dup2(infile, STDIN_FILENO);
+		close(infile);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		execute(argv[2], envp);
+	}
+	waitpid(pid, NULL, 0);
 }
 
-void	parent_proces(char **argv, char **envp, int outfile, int *fd)
+void	parent_proces(char **argv, char **envp, int *fd)
 {
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
+	pid_t	ppid;
+	int		outfile;
+
 	close(fd[1]);
-	execute(argv[3], envp);
+	ppid = fork();
+	if (ppid == -1)
+		err_msg(MSG_FORK, NULL);
+	else if (ppid == 0)
+	{
+		outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, FULL_PERM);
+		if (outfile == -1)
+			err_msg(MSG_FILE, argv[4]);
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		dup2(outfile, STDOUT_FILENO);
+		close(outfile);
+		execute(argv[3], envp);
+	}
+	waitpid(ppid, NULL, 0);
 }

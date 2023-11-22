@@ -53,7 +53,7 @@ $(OBJ_DIR):
 clean:
 	@make -s clean -C $(LIBFT_PATH)
 	@rm -rf $(BUILD)
-	@echo -e "${BOLD}${RED}> All objects files have been deleted ❌${END}"
+	@echo -e "${BOLD}${PURPLE}> All objects files have been deleted ❌${END}"
 
 fclean: clean
 	@make -s fclean -C $(LIBFT_PATH)
