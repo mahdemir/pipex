@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 14:38:32 by mademir       #+#    #+#                 */
-/*   Updated: 2023/11/22 16:05:25 by mademir       ########   odam.nl         */
+/*   Updated: 2023/11/23 14:22:11 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	main(int argc, char **argv, char **envp)
 		err_msg(MSG_ARGUMENTS, NULL);
 	if (pipe(fds) == -1)
 		err_msg(MSG_PIPE, NULL);
-	child_proces(argv, envp, fds);
-	parent_proces(argv, envp, fds);
+	infile_to_pipe(argv, envp, fds);
+	pipe_to_outfile(argv, envp, fds);
 	close(fds[0]);
 	close(fds[1]);
 	return (0);

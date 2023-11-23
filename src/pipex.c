@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 19:45:31 by mademir       #+#    #+#                 */
-/*   Updated: 2023/11/22 16:05:30 by mademir       ########   odam.nl         */
+/*   Updated: 2023/11/23 15:35:09 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,13 @@ void	err_msg(char *message, char *argv)
 	exit(EXIT_FAILURE);
 }
 
-void	child_proces(char **argv, char **envp, int *fd)
+int	infile_to_pipe(char **argv, char **envp, int *fd)
 {
 	pid_t	pid;
 	int		infile;
+	int		status;
 
+	status = 0;
 	pid = fork();
 	if (pid == -1)
 		err_msg(MSG_FORK, NULL);
@@ -95,14 +97,18 @@ void	child_proces(char **argv, char **envp, int *fd)
 		close(fd[1]);
 		execute(argv[2], envp);
 	}
-	waitpid(pid, NULL, 0);
+	else
+		waitpid(pid, &status, 0);
+	return (status);
 }
 
-void	parent_proces(char **argv, char **envp, int *fd)
+int	pipe_to_outfile(char **argv, char **envp, int *fd)
 {
 	pid_t	ppid;
 	int		outfile;
+	int		status;
 
+	status = 0;
 	close(fd[1]);
 	ppid = fork();
 	if (ppid == -1)
@@ -118,5 +124,7 @@ void	parent_proces(char **argv, char **envp, int *fd)
 		close(outfile);
 		execute(argv[3], envp);
 	}
-	waitpid(ppid, NULL, 0);
+	else
+		waitpid(ppid, &status, 0);
+	return (status);
 }
