@@ -47,7 +47,7 @@ all: lft $(NAME)
 		echo -e "${BOLD}${GREEN}[ OK ]  Pipex built successfully! 🎉${END}"; \
 	fi \
 
-$(NAME): $(OBJ) | lft
+$(NAME): $(OBJ)
 	@echo -e "${BOLD}${YELLOW}[ .. ]  Compiling pipex ..${END}"
 	@$(CC) $(CFLAGS) $^ $(LIBFT_LIB) -o $@
 
