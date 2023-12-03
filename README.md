@@ -1,5 +1,5 @@
 # ↔️ Pipex
-This project will let you discover in detail a UNIX mechanism that you already know from shell  **P | I | P | I | N | G | !**
+This project will let you discover in detail a UNIX mechanism that you already know from shell,  **P | I | P | I | N | G | !**
 
 ## 🛠️ Compilation
 Clone this repository and go in to the root of the directory by running:
