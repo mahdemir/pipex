@@ -19,6 +19,7 @@ SRC_DIR			= ./src
 INC_DIR			= ./inc
 LIBFT_PATH		= ./libft
 LIBFT_LIB		= $(LIBFT_PATH)/libft.a
+LIBFT_REPO		= https://github.com/mahdemir/libft.git
 PROG_HEADER		= $(INC_DIR)/pipex.h
 
 SRC = $(addprefix $(SRC_DIR)/, \
@@ -34,15 +35,21 @@ IFLAGS	= -I $(INC_DIR)
 SHELL	:= /bin/bash
 
 NAME	= pipex
+CHECKSUM_FILE := $(BUILD)/last_build_checksum
 
 ##### RULES ####################################################################
 
-all: $(NAME)
+all: lft $(NAME)
+	@if [ -e "$(CHECKSUM_FILE)" ] && [ "$$(cat $(CHECKSUM_FILE))" = "$$(make checksum)" ]; then \
+		echo -e "${BOLD}${GREEN}[ OK ]  Pipex is already built!${END}"; \
+	else \
+		make checksum > "$(CHECKSUM_FILE)"; \
+		echo -e "${BOLD}${GREEN}[ OK ]  Pipex built successfully! 🎉${END}"; \
+	fi \
 
 $(NAME): $(OBJ) | lft
-	@echo -e "${BOLD}${YELLOW}[ .. ] | Compiling pipex..${END}"
+	@echo -e "${BOLD}${YELLOW}[ .. ]  Compiling pipex ..${END}"
 	@$(CC) $(CFLAGS) $^ $(LIBFT_LIB) -o $@
-	@echo -e "${BOLD}${GREEN}[ OK ] | Compilation is successful! 🎉${END}"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(PROG_HEADER) | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(IFLAGS)
@@ -51,23 +58,28 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 clean:
-	@make -s clean -C $(LIBFT_PATH)
 	@rm -rf $(BUILD)
-	@echo -e "${BOLD}${PURPLE}> All objects files have been deleted ❌${END}"
+	@if [ -d "$(LIBFT_PATH)" ]; then \
+		make -s clean -C $(LIBFT_PATH); \
+	fi
 
-fclean: clean
-	@make -s fclean -C $(LIBFT_PATH)
+fclean:
+	@rm -rf $(BUILD)
 	@rm -f $(NAME)
-	@echo -e "${BOLD}${RED}> Cleaning has been done ❌${END}"
+	@if [ -d "$(LIBFT_PATH)" ]; then \
+		make -s fclean -C $(LIBFT_PATH); \
+	fi
 
 re: fclean all
 
 lft:
-	@if [ -f $(LIBFT_LIB) ]; then \
-		echo -e "${BOLD}${GREEN}[ OK ] | Libft is already built.${END}"; \
-	else \
-		make -s -C $(LIBFT_PATH); \
-		echo -e "\n${BOLD}${GREEN}[ OK ] | Libft built successfully!${END}"; \
+	@if [ ! -d "$(LIBFT_PATH)" ]; then \
+		echo -e "${BOLD}${GRAY}    > - Cloning https://github.com/mahdemir/libft ..${END}"; \
+		git clone $(LIBFT_REPO) $(LIBFT_PATH) 2>/dev/null; \
 	fi
+	@make -s -C $(LIBFT_PATH)
+
+checksum:
+	@find $(SRC_DIR) -name '*.c' | xargs cat | shasum -a 256 | cut -d ' ' -f 1
 
 .PHONY: all clean fclean re lft

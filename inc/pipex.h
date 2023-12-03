@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 14:39:03 by mademir       #+#    #+#                 */
-/*   Updated: 2023/11/23 14:23:07 by mademir       ########   odam.nl         */
+/*   Updated: 2023/11/24 16:35:14 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@
 
 /* First command reads the input from the infile
  * and passes the output to the write-end(fd[1]) of the pipe. */
-int	infile_to_pipe(char **argv, char **envp, int *fd);
+void	infile_to_pipe(char **argv, char **envp, int *fd);
 
 /* Second command takes input from read-end(fd[0]) of the pipe
  * and passes the output to the output file. */
-int	pipe_to_outfile(char **argv, char **envp, int *fd);
+void	pipe_to_outfile(char **argv, char **envp, int *fd);
 
 /* Simple error handling function that prints message to STDERR. */
-void	err_msg(char *message, char *argv);
+void	err_msg(char *message, char *argv, int code);
 
 #endif
