@@ -74,7 +74,7 @@ re: fclean all
 
 lft:
 	@if [ ! -d "$(LIBFT_PATH)" ]; then \
-		echo -e "${BOLD}${GRAY}    > - Cloning https://github.com/mahdemir/libft ..${END}"; \
+		echo -e "${BOLD}${GRAY}    > - Cloning $(LIBFT_REPO) ..${END}"; \
 		git clone $(LIBFT_REPO) $(LIBFT_PATH) 2>/dev/null; \
 	fi
 	@make -s -C $(LIBFT_PATH)
