@@ -20,6 +20,7 @@ INC_DIR			= ./inc
 LIBFT_PATH		= ./libft
 LIBFT_LIB		= $(LIBFT_PATH)/libft.a
 LIBFT_REPO		= https://github.com/mahdemir/libft.git
+PULL_LOG		= ./pull_log
 PROG_HEADER		= $(INC_DIR)/pipex.h
 
 SRC = $(addprefix $(SRC_DIR)/, \
@@ -58,25 +59,40 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 clean:
-	@rm -rf $(BUILD)
 	@if [ -d "$(LIBFT_PATH)" ]; then \
 		make -s clean -C $(LIBFT_PATH); \
+	else \
+		echo -e "${BOLD}${PURPLE}    > - All objects files have been deleted ❌${END}"; \
 	fi
+	@rm -rf $(BUILD)
 
 fclean:
-	@rm -rf $(BUILD)
-	@rm -f $(NAME)
 	@if [ -d "$(LIBFT_PATH)" ]; then \
 		make -s fclean -C $(LIBFT_PATH); \
+	else \
+		echo -e "${BOLD}${PURPLE}    > - All objects files have been deleted ❌${END}"; \
+		echo -e "${BOLD}${RED}    > - Cleaning has been done ❌${END}"; \
 	fi
+	@rm -rf $(BUILD) $(LIBFT_PATH)
+	@rm -f $(NAME) $(PULL_LOG)
 
 re: fclean all
 
 lft:
 	@if [ ! -d "$(LIBFT_PATH)" ]; then \
-		echo -e "${BOLD}${GRAY}    > - Cloning $(LIBFT_REPO) ..${END}"; \
-		git clone $(LIBFT_REPO) $(LIBFT_PATH) 2>/dev/null; \
-	fi
+		echo -e "${BOLD}${GRAY}    > - Cloning $(LIBFT_REPO) ..${END}\n"; \
+		git clone $(LIBFT_REPO) $(LIBFT_PATH) &> /dev/null; \
+    else \
+        echo -e "${BOLD}${GRAY}    > - Checking for updates in $(LIBFT_REPO) ..${END}"; \
+        LOCAL_HASH=$$(git -C $(LIBFT_PATH) rev-parse HEAD); \
+        REMOTE_HASH=$$(git -C $(LIBFT_PATH) ls-remote origin -h refs/heads/main | cut -f1); \
+        if [ "$$LOCAL_HASH" = "$$REMOTE_HASH" ]; then \
+			echo -e "${BOLD}${GRAY}    > - Libft is already up to date!${END}\n"; \
+        else \
+			echo -e "${BOLD}${GRAY}    > - Updating libft.. See $(PULL_LOG) for details!${END}\n"; \
+            git -C $(LIBFT_PATH) pull &> $(PULL_LOG); \
+        fi \
+    fi
 	@make -s -C $(LIBFT_PATH)
 
 checksum:
