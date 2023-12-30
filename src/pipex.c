@@ -6,7 +6,7 @@
 /*   By: mademir <mademir@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/18 19:45:31 by mademir       #+#    #+#                 */
-/*   Updated: 2023/12/02 17:29:21 by mademir       ########   odam.nl         */
+/*   Updated: 2023/12/30 08:05:15 by mademir       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*path_finder(char **envp, char *cmd)
 			free(cmd_path);
 		i++;
 	}
-	ft_matrix_free((void **)paths, i);
+	ft_matrix_free((void **)paths);
 	return (NULL);
 }
 
@@ -57,7 +57,7 @@ static void	execute(char *argv, char **envp)
 		path = path_finder(envp, cmd[0]);
 	if (!path)
 	{
-		ft_matrix_free((void **)cmd, ft_matrix_height((void **)cmd));
+		ft_matrix_free((void **)cmd);
 		err_msg(MSG_COMMAND, argv, 127);
 	}
 	if (execve(path, cmd, envp) == -1)
